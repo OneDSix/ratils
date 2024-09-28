@@ -1,2 +1,97 @@
-# ratils
-Random Utilities used by 1D6 and its sub projects.
+# Ratils
+
+**Ra**ndom U**tils** used by 1D6 and its sub projects.\
+MIT licensed; feel free to use on its own in any projects you have.\
+Primarily targets Java 8, but should be compatible up to the latest Java release (as of now, 22).
+
+## Poly-Structs
+
+The 2 classes in the `net.onedsix.ratils.poly` package are meant for storing multiple objects in one, packing them up for later.\
+`Trio` is used by `net.onedsix.ratils.trimap.TrioList`; `Duo` isn't used by anything internally.
+
+## `TriMap`s
+
+`TriMap`s, `TriArray`s, and `TriList`s allow for multiple layer data structures, similar to JSON or TOML files.\
+Their one downside is memory and computation inefficiencies.
+
+`TriMap`s are internally a `Map<D, Map<K, V>>`, meaning their lookup speed is pretty good, but memory usage is a serious
+concern for large datasets.
+
+`TriArray`s are internally `D[]; K[]; V[];`, meaning their lookup speed is atrocious, but memory usage isn't too bad and
+can be managed manually if needed.
+
+`TriList`s are internally `List<D>; List<K>; List<V>;`, meaning they're a fair middle ground for most use cases, and can
+maybe be slightly more memory efficient by using `LinkedTriList` specifically.
+
+All of these classes implement the base `TriMap<D,K,V>` interface, containing all of the common methods between them.
+As such, all of these different backends are interchangeable on demand.
+
+Here are some example uses:
+```java
+import net.onedsix.ratils.trimap.*;
+import java.util.Locale;
+
+public class TriTest {
+    // Maybe for translations?
+    public final TriMap<Locale, String, String> tri = new HashTriMap(Locale.getDefault());
+    
+    // Timestamped events in an ECS?
+    public LinkedTriList<Date, ? extends MyEvent, ? extends MyEntity> timestamped = null;
+    
+    // An entire Json file in a single object? Just use Gson instead...
+    public static TriMap<Object, Object, Object> json = new LinkedTriList(null);
+}
+```
+
+If you plan on letting any dev-facing parts use a `TriStruct` or any of its extensions, consider using the base
+`TriStruct` interface, as the dev can then choose what extension is best in their specific scenario.
+
+## `Result`s
+
+A Java port of Rust's `Result` syntax, allowing for better returns and error handling.
+
+```java
+import net.onedsix.ratils.Result;
+import java.io.*;
+
+public class ResultTest {
+    
+    public static void main(String[] args) {
+        Result<String, ?> readRes = readResult(new File("./test.txt"));
+        
+        // Check if the result is an error
+        boolean containsError = readRes.errored();
+        
+        // Lambda-based port of Rust's switch statement
+        readRes.match(
+            ok -> {
+                System.out.println("Contents of ./test.txt:");
+                System.out.println(ok);
+            },
+            err -> {
+                System.out.println("Errored while reading:");
+                System.out.println(err.getMessage());
+            }
+        );
+    }
+    
+    public static Result<String, IOException> readResult(File file) {
+        try {
+            // Reading a file line-by-line,
+            // might throw a IOException
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) content.append(line).append("\n");
+            br.close();
+            
+            // Return an OK!
+            return Result.Ok(content.toString());
+        } catch (IOException e) {
+            // On error, return ERR!
+            return Result.Err(e);
+        }
+    }
+
+}
+```
