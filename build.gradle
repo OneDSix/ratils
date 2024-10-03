@@ -1,9 +1,11 @@
 plugins {
     id "application"
+    id "java"
+    id "java-library"
 }
 
 group = "net.onedsix.ratils"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -19,6 +21,9 @@ dependencies {
     compileOnly("org.jetbrains:annotations:23.0.0")
 	implementation("org.slf4j:slf4j-api:1.7.32")
 	implementation("ch.qos.logback:logback-classic:1.2.6")
+
+    // Optional Utils
+    compileOnly("com.badlogicgames.gdx:gdx:1.12.1") // for Disposable
 
     // Tests and Benchmarking
     testImplementation("org.openjdk.jmh:jmh-core:$jmhVersion")

@@ -1,12 +1,10 @@
 package net.onedsix.ratils.tests;
 
-import net.onedsix.ratils.Result;
+import net.onedsix.ratils.result.Result;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.net.URISyntaxException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ResultTest {
     
@@ -18,7 +16,7 @@ public class ResultTest {
         } catch (URISyntaxException urise) {
             return;
         }
-        Result<String, ?> readRes = readResult(internalText);
+        Result<String, Exception> readRes = readResult(internalText);
     
         // Check if the result is an error
         boolean containsError = readRes.errored();
@@ -43,7 +41,7 @@ public class ResultTest {
         System.out.println(matched);
     }
     
-    public static Result<String, ?> readResult(File file) {
+    public static Result<String, Exception> readResult(File file) {
         try {
             // Reading a file line-by-line,
             // might throw a IOException

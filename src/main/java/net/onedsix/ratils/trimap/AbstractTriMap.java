@@ -2,6 +2,7 @@ package net.onedsix.ratils.trimap;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +13,7 @@ public abstract class AbstractTriMap<D, K, V> implements TriMap<D, K, V> {
 	public int largestInternalSize = Integer.MAX_VALUE, totalSize = Integer.MAX_VALUE;
 
 	protected AbstractTriMap(Map<D, Map<K, V>> nodes, D preferredDivider) {
-		this.nodes = nodes;
+		this.nodes = Collections.synchronizedMap(nodes);
 		this.preferredDivider = preferredDivider;
 	}
 

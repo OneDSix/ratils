@@ -1,4 +1,6 @@
-package net.onedsix.ratils.trimap;
+package net.onedsix.ratils.trimap.list;
+
+import net.onedsix.ratils.trimap.AbstractTriList;
 
 import java.util.LinkedList;
 

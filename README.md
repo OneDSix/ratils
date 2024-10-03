@@ -1,15 +1,23 @@
 # Ratils
 
 **Ra**ndom U**tils** used by 1D6 and its sub projects.\
+The main goal being adding smaller basic utilities, mostly porting existing features from other languages/frameworks.\
 MIT licensed; feel free to use on its own in any projects you have.\
 Primarily targets Java 8, but should be compatible up to the latest Java release (as of now, 22).
 
-## Poly-Structs
+## Features
+
+### Poly-Structs
 
 The 2 classes in the `net.onedsix.ratils.poly` package are meant for storing multiple objects in one, packing them up for later.\
-`Trio` is used by `net.onedsix.ratils.trimap.TrioList`; `Duo` isn't used by anything internally.
+All of them implement the `PolyStruct` interface.
 
-## `TriMap`s
+* `Duo` is used by most of the `net.onedsix.ratils.cache` package,
+* `Trio` is used by `net.onedsix.ratils.trimap.TrioList`,
+* `Quad` is not used internally,
+* `Quinto` does not exist, but if requested can be easily added.
+
+### `TriMap`s
 
 `TriMap`s, `TriArray`s, and `TriList`s allow for multiple layer data structures, similar to JSON or TOML files.\
 Their one downside is memory and computation inefficiencies.
@@ -33,6 +41,7 @@ import java.util.Locale;
 
 public class TriTest {
     // Maybe for translations?
+    // Fun Fact: this is what TriMap was originally made for
     public final TriMap<Locale, String, String> tri = new HashTriMap(Locale.getDefault());
     
     // Timestamped events in an ECS?
@@ -46,9 +55,9 @@ public class TriTest {
 If you plan on letting any dev-facing parts use a `TriStruct` or any of its extensions, consider using the base
 `TriStruct` interface, as the dev can then choose what extension is best in their specific scenario.
 
-## `Result`s
+### `Result`s
 
-A Java port of Rust's `Result` syntax, allowing for better returns and error handling.
+A Java port of [Rust's `Result` syntax](https://doc.rust-lang.org/std/result/enum.Result.html), allowing for better returns and error handling.
 
 ```java
 import net.onedsix.ratils.Result;
@@ -57,7 +66,7 @@ import java.io.*;
 public class ResultTest {
     
     public static void main(String[] args) {
-        Result<String, ?> readRes = readResult(new File("./test.txt"));
+        Result<String, Throwable> readRes = readResult(new File("./test.txt"));
         
         // Check if the result is an error
         boolean containsError = readRes.errored();
@@ -90,8 +99,56 @@ public class ResultTest {
         } catch (IOException e) {
             // On error, return ERR!
             return Result.Err(e);
+            // Note that Err doesn't require a Throwable after 1.0.1
         }
     }
 
 }
 ```
+
+### Caches
+
+This package is based off [klinbee's SimpleCache implementation](https://github.com/klinbee/Bad-Apple-World-Preset/blob/main/common/src/main/java/com/klinbee/badapple/SimpleCache.java).
+
+
+
+## Installing
+
+```kotlin
+repositories {
+    // You probably have these already
+    mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+}
+
+dependencies {
+    // Ratils by itself
+    implementaion("com.github.OneDSix:ratils:main-SNAPSHOT")
+    
+    // Optional Dependencies:
+    // LibGDX (for the "net.onedsix.ratils.gdx" package
+    api("com.badlogicgames.gdx:gdx:$gdxVersion")
+}
+```
+
+## Changelog
+
+### 1.0.1
+
+* Reorganized quite a few classes:
+  * All package begin with `net.onedsix.ratils`.
+  * `Result` was moved to `result` package
+    * A wrapper for common `io` and `net` methods returning `Result`s is planned for this package
+  * All `TriMap` extension are now in `trimap.hash`, `trimap.list`, and `trimap.thread` as to organize it a bit
+  * All classes in the `poly` package now extend `PolyStruct`
+* Added the `cache` package, containing utilities for temporarily containing objects
+* Moved `AutoDisposable` from 1D6 to Ratils, nothing else has changed with it besides some documentation and the package path
+* `Result`'s `<E>` generic no longer extends `Throwable`
+* Small ReadMe and documentation updates
+
+### 1.0.0
+
+**Initial Release**
+
+* Added Result, Trimap, and Poly features
+* Most of Trimap is non-functional

@@ -1,6 +1,9 @@
 package net.onedsix.ratils.tests;
 
 import net.onedsix.ratils.trimap.*;
+import net.onedsix.ratils.trimap.hash.HashTriMap;
+import net.onedsix.ratils.trimap.list.LinkedTriList;
+import net.onedsix.ratils.trimap.list.TriArray;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.options.Options;

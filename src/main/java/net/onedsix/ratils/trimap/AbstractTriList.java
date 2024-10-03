@@ -1,5 +1,6 @@
 package net.onedsix.ratils.trimap;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -10,24 +11,24 @@ public abstract class AbstractTriList<D, K, V> implements TriMap<D, K, V> {
     public D preferredDivider;
     
     protected AbstractTriList(List<D> dividers, List<K> keys, List<V> values, D preferredDivider) {
-        this.dividers = dividers;
-        this.keys = keys;
-        this.values = values;
+        this.dividers = Collections.synchronizedList(dividers);
+        this.keys = Collections.synchronizedList(keys);
+        this.values = Collections.synchronizedList(values);
         this.preferredDivider = preferredDivider;
     }
     @Override
     public int dividerSize() {
-        return 0;
+        return dividers.size();
     }
     
     @Override
     public int largestInternalSize() {
-        return 0;
+        return Integer.MAX_VALUE;
     }
     
     @Override
     public int totalSize() {
-        return 0;
+        return values.size();
     }
     
     @Override
@@ -57,7 +58,7 @@ public abstract class AbstractTriList<D, K, V> implements TriMap<D, K, V> {
     
     @Override
     public V get(K key) {
-        return null;
+        return get(this.preferredDivider, key);
     }
     
     @Override
@@ -77,22 +78,32 @@ public abstract class AbstractTriList<D, K, V> implements TriMap<D, K, V> {
     
     @Override
     public Map<K, V> getInternalMap() {
-        return null;
+        return getInternalMap(this.preferredDivider);
     }
     
     @Override
     public V put(K key, V value) {
-        return null;
+        return put(this.preferredDivider, key, value);
     }
     
     @Override
     public V put(D divider, K key, V value) {
-        return null;
+        for (int i = 0; i < totalSize(); i++) {
+            if (dividers.get(i) == divider && keys.get(i) == key) {
+                values.set(i, value);
+                return value;
+            }
+        }
+        
+        dividers.add(divider);
+        keys.add(key);
+        values.add(value);
+        return value;
     }
     
     @Override
     public void putAll(D divider, Map<K, V> map) {
-    
+        map.forEach((key, value) -> AbstractTriList.this.put(divider, key, value));
     }
     
     @Override
@@ -107,12 +118,14 @@ public abstract class AbstractTriList<D, K, V> implements TriMap<D, K, V> {
     
     @Override
     public void clear() {
-    
+        dividers.clear();
+        keys.clear();
+        values.clear();
     }
     
     @Override
     public D setPreferredDivider(D divider) {
-        return null;
+        return this.preferredDivider = divider;
     }
     
     @Override

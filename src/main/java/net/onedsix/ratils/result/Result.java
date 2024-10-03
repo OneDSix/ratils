@@ -1,18 +1,18 @@
-package net.onedsix.ratils;
+package net.onedsix.ratils.result;
 
 import lombok.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /** A port of Rust's Result syntax to Java.<br>
  * <br>
  * Allows for methods to return either a value, referred to as {@link V} or {@link Result#value};<br>
- * or a {@link Throwable} (and thus {@link Exception} and {@link Error}), referred to as {@link E} or {@link Result#error}.<br>
+ * or a second value, usually a {@link Throwable} (and thus {@link Exception} and {@link Error}), referred to as {@link E} or {@link Result#error}.<br>
+ * Note that {@link E} doesn't require a {@link Throwable} after {@code Ratils 1.0.1}.<br>
  * <br>
  * This aims to help with error handling, and help make developers decide how they want to handle errors. The
  * {@link Result#match(Consumer, Consumer)} and {@link Result#match(Function, Function)} methods will separate out each path,
@@ -33,7 +33,7 @@ import java.util.function.Function;
  * public class ResultTest {
  *
  *     public static void main(String[] args) {
- *         Result<String, ?> readRes = readResult(new File("./test.txt"));
+ *         Result<String, Throwable> readRes = readResult(new File("./test.txt"));
  *
  *         // Check if the result is an error
  *         boolean containsError = readRes.errored();
@@ -75,7 +75,7 @@ import java.util.function.Function;
 @ToString
 @Getter @Setter
 @SuppressWarnings("unused")
-public class Result<V, E extends Throwable> implements Serializable {
+public class Result<V, E> {
     public @Nullable V value;
     public @Nullable E error;
     
@@ -92,15 +92,15 @@ public class Result<V, E extends Throwable> implements Serializable {
     
     /** Returns an "OK!" Result
      * @return {@link Result#error} will always be {@code null}; {@link Result#value} will be a valid object.
-     * @see Result#Err(Throwable bad)  */
-    public static <V, E extends Throwable> Result<V, E> Ok(@NotNull V ok) {
+     * @see Result#Err(E)  */
+    public static <V, E> Result<V, E> Ok(@NotNull V ok) {
         return new Result<>(ok, null);
     }
     
     /** Results an "ERR!" Result
      * @return {@link Result#value} will always be {@code null}; {@link Result#error} is a {@link Throwable}, {@link Exception}, or {@link Error}
      * @see Result#Ok(V ok) */
-    public static <V, E extends Throwable> Result<V, E> Err(@NotNull E bad) {
+    public static <V, E> Result<V, E> Err(@NotNull E bad) {
         return new Result<>(null, bad);
     }
     
@@ -109,8 +109,7 @@ public class Result<V, E extends Throwable> implements Serializable {
     }
     
     public Object getResult() {
-        if (errored()) return error;
-        else return value;
+        return errored() ? error : value;
     }
     
     /**

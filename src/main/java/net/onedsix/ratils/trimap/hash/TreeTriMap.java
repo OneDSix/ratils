@@ -1,4 +1,6 @@
-package net.onedsix.ratils.trimap;
+package net.onedsix.ratils.trimap.hash;
+
+import net.onedsix.ratils.trimap.AbstractTriMap;
 
 import java.util.TreeMap;
 

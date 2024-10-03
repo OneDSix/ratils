@@ -1,5 +1,6 @@
-package net.onedsix.ratils.trimap;
+package net.onedsix.ratils.trimap.list;
 
+import net.onedsix.ratils.trimap.TriMap;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;

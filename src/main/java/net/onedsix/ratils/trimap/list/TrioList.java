@@ -1,6 +1,7 @@
-package net.onedsix.ratils.trimap;
+package net.onedsix.ratils.trimap.list;
 
 import net.onedsix.ratils.poly.Trio;
+import net.onedsix.ratils.trimap.TriMap;
 
 import java.util.List;
 import java.util.Map;

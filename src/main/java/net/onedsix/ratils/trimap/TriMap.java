@@ -1,5 +1,12 @@
 package net.onedsix.ratils.trimap;
 
+import net.onedsix.ratils.trimap.hash.HashTriMap;
+import net.onedsix.ratils.trimap.hash.TreeTriMap;
+import net.onedsix.ratils.trimap.hash.WeakHashTriMap;
+import net.onedsix.ratils.trimap.list.ArrayTriList;
+import net.onedsix.ratils.trimap.list.LinkedTriList;
+import net.onedsix.ratils.trimap.list.TriArray;
+
 import java.util.Map;
 
 /**A {@link Map} of nested {@link Map}s, allowing for more complex data to be stored in a single object.<br>
