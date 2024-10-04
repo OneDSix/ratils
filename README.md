@@ -133,6 +133,18 @@ dependencies {
 
 ## Changelog
 
+### TODO
+
+* All the documentation
+* Finish the `TriList` and `ConcurentTriMap` implementations of `TriMap`
+
+### 1.0.2
+
+* Fixed an issue when using `boolean` as a `Result`'s error type
+* Added `SwitchBuilder`
+  * Ports Java 14 and 18's enhanced switches to Java 8, heavily relying on lambdas, with an optional return type like Rust's match statement
+  * See [`SwitchTest`](./src/test/java/net/onedsix/ratils/tests/SwitchTest.java) for an example
+
 ### 1.0.1
 
 * Reorganized quite a few classes:
