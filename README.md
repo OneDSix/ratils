@@ -138,6 +138,11 @@ dependencies {
 * All the documentation
 * Finish the `TriList` and `ConcurentTriMap` implementations of `TriMap`
 
+### 1.0.3
+
+Revert the `error instanceof Boolean` check in `Result` as it was causing compilation errors.\
+This will be added back in later.
+
 ### 1.0.2
 
 * Fixed an issue when using `boolean` as a `Result`'s error type

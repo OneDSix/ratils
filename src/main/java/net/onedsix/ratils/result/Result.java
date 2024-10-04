@@ -105,8 +105,7 @@ public class Result<V, E> {
     }
     
     public boolean errored() {
-        if (error instanceof Boolean) return (boolean) error;
-        else return error != null;
+        return error != null;
     }
     
     public Object getResult() {
