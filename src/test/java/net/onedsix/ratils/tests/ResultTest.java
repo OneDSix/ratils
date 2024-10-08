@@ -1,6 +1,6 @@
 package net.onedsix.ratils.tests;
 
-import net.onedsix.ratils.result.Result;
+import net.onedsix.ratils.Result;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;

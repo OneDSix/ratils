@@ -1,11 +1,9 @@
 package net.onedsix.ratils.cache;
 
-import com.badlogic.gdx.utils.Disposable;
-import net.onedsix.ratils.gdx.AutoDisposable;
-
 import java.util.Map;
 
-public interface Cache<K,V> extends AutoDisposable {
+@SuppressWarnings("unused")
+public interface Cache<K,V> extends AutoCloseable {
     /** See {@link Map#size()} */
     int size();
     
@@ -43,15 +41,14 @@ public interface Cache<K,V> extends AutoDisposable {
      * <ul>
      *     <li>{@link Cache#put(K, V)}</li>
      *     <li>{@link Cache#remove(K)}</li>
-     *     <li>{@link Disposable#dispose()}</li>
      *     <li>{@link AutoCloseable#close()}</li>
-     *     <li>{@link AutoDisposable#free()}</li>
      * </ul>
      * Its recommended to call this <b>before</b> calling {@link System#gc()} or equivalent.
      * */
     int invalidate();
     
-    @Override default void free() {
+    
+    @Override default void close() {
         invalidate();
     }
 }

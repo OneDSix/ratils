@@ -133,10 +133,13 @@ dependencies {
 
 ## Changelog
 
-### TODO
+### 1.1.0
 
-* All the documentation
-* Finish the `TriList` and `ConcurentTriMap` implementations of `TriMap`
+**Production Ready**
+
+* A ton of new documentation
+* Finish the implementations of `TriMap`
+* Add the `switching` package, containing utils for backport Java 14 and 18's switch statements
 
 ### 1.0.3
 

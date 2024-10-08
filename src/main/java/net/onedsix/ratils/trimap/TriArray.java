@@ -1,7 +1,4 @@
-package net.onedsix.ratils.trimap.list;
-
-import net.onedsix.ratils.trimap.TriMap;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+package net.onedsix.ratils.trimap;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -30,47 +27,58 @@ public class TriArray<D, K, V> implements TriMap<D, K, V> {
      * @see TriArray#keys
      * */
     public Object[] values;
-    public int size;
+    public int currentSize;
     public D preferredDivider;
     /** The capacity of the arrays.<br>
      * There is no way to change the target capacity after construction. */
-    public final int capacity;
+    public final int maximumCapacity;
     
     public TriArray(D preferredDivider, int capacity) {
         this.dividers = new Object[capacity];
         this.keys = new Object[capacity];
         this.values = new Object[capacity];
         this.preferredDivider = preferredDivider;
-        this.size = 0;
-        this.capacity = capacity;
+        this.currentSize = 0;
+        this.maximumCapacity = capacity;
+    }
+    
+    /** Returns the location of the given divider-key pair.
+     * @return The location of the specified divider-key pair, or {@code -1} if not found */
+    public int getLocation(D divider, K key) {
+        for (int i = 0; i < currentSize; i++) {
+            if (dividers[i].equals(divider) && keys[i].equals(key)) {
+                return i;
+            }
+        }
+        return -1;
     }
     
     @Override
     public int dividerSize() {
-        throw new NotImplementedException();
+        return dividers.length;
     }
     
     @Override
-    public int largestInternalSize() {
-        throw new NotImplementedException();
+    public int largestInternalSize() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("TriArray does not support largestInternalSize()");
     }
     
     @Override
-    public int totalSize() {
-        return size;
+    public int size() {
+        return currentSize;
     }
     
     public int getCapacity() {
-        return capacity;
+        return maximumCapacity;
     }
     
     public int spaceRemaining() {
-        return capacity - size;
+        return maximumCapacity - currentSize;
     }
     
     @Override
     public boolean containsDivider(D supposedDivider) {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < currentSize; i++) {
             if (dividers[i].equals(supposedDivider)) {
                 return true;
             }
@@ -80,22 +88,22 @@ public class TriArray<D, K, V> implements TriMap<D, K, V> {
     
     @Override
     public boolean containsKey(K supposedKey) {
-        throw new NotImplementedException();
+        return containsKey(this.preferredDivider, supposedKey);
     }
     
     @Override
     public boolean containsKey(D divider, K supposedKey) {
-        throw new NotImplementedException();
+        return getLocation(divider, supposedKey) >= 0; // -1 means not found
     }
     
     @Override
-    public boolean containsValue(V supposedValue) {
-        throw new NotImplementedException();
+    public boolean containsValue(V supposedValue) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("TriArray does not support containsValue()");
     }
     
     @Override
-    public boolean containsValue(D divider, V supposedValue) {
-        throw new NotImplementedException();
+    public boolean containsValue(D divider, V supposedValue) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("TriArray does not support containsValue()");
     }
     
     @Override
@@ -106,19 +114,19 @@ public class TriArray<D, K, V> implements TriMap<D, K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public V get(D divider, K key) {
-        for (int i = 0; i < size; i++) {
-            if (dividers[i].equals(divider) && keys[i].equals(key)) {
-                return (V) values[i];
-            }
+        int position = getLocation(divider, key);
+        if (position != -1) {
+            return (V) values[position];
+        } else {
+            return null;
         }
-        return null;
     }
     
     @Override
     @SuppressWarnings("unchecked")
-    public Map<K, V> getInternalMap(D divider) {
+    public Map<K, V> getSubmap(D divider) {
         Map<K, V> map = new WeakHashMap<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < currentSize; i++) {
             if (dividers[i].equals(divider)) {
                 map.put((K) keys[i], (V) values[i]);
             }
@@ -127,32 +135,31 @@ public class TriArray<D, K, V> implements TriMap<D, K, V> {
     }
     
     @Override
-    public Map<K, V> getInternalMap() {
-        return getInternalMap(preferredDivider);
+    public Map<K, V> getSubmap() {
+        return getSubmap(preferredDivider);
     }
     
     @Override
     public V put(K key, V value) throws ArrayIndexOutOfBoundsException {
-        return put(preferredDivider, key, value);
+        return put(this.preferredDivider, key, value);
     }
     
     @Override
     public V put(D divider, K key, V value) throws ArrayIndexOutOfBoundsException {
-        if (capacity == size)
+        if (maximumCapacity == currentSize)
             throw new ArrayIndexOutOfBoundsException("This TriArray has reached capacity!");
         
         // Check if the entry already exists
-        for (int i = 0; i < size; i++) {
-            if (dividers[i].equals(divider) && keys[i].equals(key)) {
-                values[i] = value;
-                return value;
-            }
+        int position = getLocation(divider, key);
+        if (position != -1) {
+            values[position] = value;
+            return value;
         }
         // If not, add new entry
-        dividers[size] = divider;
-        keys[size] = key;
-        values[size] = value;
-        size++;
+        dividers[currentSize] = divider;
+        keys[currentSize] = key;
+        values[currentSize] = value;
+        currentSize++;
         return value;
     }
     
@@ -162,20 +169,20 @@ public class TriArray<D, K, V> implements TriMap<D, K, V> {
     }
     
     @Override
-    public boolean remove(D divider, K key) {
-        throw new NotImplementedException();
+    public V removeEntry(D divider, K key) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("TriArray does not support removal");
     }
     
     @Override
-    public Map<K, V> remove(D divider) {
-        throw new NotImplementedException();
+    public Map<K, V> removeSubmap(D divider) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("TriArray does not support removal");
     }
     
     @Override
     public void clear() {
-        dividers = new Object[capacity];
-        keys = new Object[capacity];
-        values = new Object[capacity];
+        dividers = new Object[maximumCapacity];
+        keys = new Object[maximumCapacity];
+        values = new Object[maximumCapacity];
     }
     
     @Override

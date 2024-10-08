@@ -1,5 +1,12 @@
 package net.onedsix.ratils.poly;
 
+import lombok.AllArgsConstructor;
+
+/** A simple 4 object structure for holding 4 objects in one.<br>
+ * @see Duo
+ * @see Trio
+ * @see PolyStruct */
+@AllArgsConstructor
 public class Quad<A, B, C, D> implements PolyStruct<A, B> {
     
     public A first;

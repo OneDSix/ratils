@@ -1,6 +1,4 @@
-package net.onedsix.ratils.trimap.hash;
-
-import net.onedsix.ratils.trimap.AbstractTriMap;
+package net.onedsix.ratils.trimap;
 
 import java.util.WeakHashMap;
 

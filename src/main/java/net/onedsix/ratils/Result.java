@@ -1,4 +1,4 @@
-package net.onedsix.ratils.result;
+package net.onedsix.ratils;
 
 import lombok.*;
 import org.jetbrains.annotations.ApiStatus;

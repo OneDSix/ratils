@@ -7,9 +7,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractTriMap<D, K, V> implements TriMap<D, K, V> {
-	public Map<D, Map<K, V>> nodes;
+	public final Map<D, Map<K, V>> nodes;
 	public D preferredDivider;
-	public boolean modifiedSinceLastInternalsSizeCheck = true, modifiedSinceLastTotalSizeCheck = true;
+	public final boolean modifiedSinceLastInternalsSizeCheck = true;
+	public final boolean modifiedSinceLastTotalSizeCheck = true;
 	public int largestInternalSize = Integer.MAX_VALUE, totalSize = Integer.MAX_VALUE;
 
 	protected AbstractTriMap(Map<D, Map<K, V>> nodes, D preferredDivider) {
@@ -35,7 +36,7 @@ public abstract class AbstractTriMap<D, K, V> implements TriMap<D, K, V> {
 	}
 
 	@Override
-	public int totalSize() {
+	public int size() {
 		if (modifiedSinceLastTotalSizeCheck || totalSize == Integer.MAX_VALUE) {
 			AtomicInteger tempSize = new AtomicInteger();
 			nodes.forEach((ignored, value) -> tempSize.addAndGet(value.size()));
@@ -80,12 +81,12 @@ public abstract class AbstractTriMap<D, K, V> implements TriMap<D, K, V> {
 	}
 
 	@Override
-	public Map<K, V> getInternalMap(D divider) {
+	public Map<K, V> getSubmap(D divider) {
 		return nodes.get(divider);
 	}
 
 	@Override
-	public Map<K, V> getInternalMap() {
+	public Map<K, V> getSubmap() {
 		return nodes.get(preferredDivider);
 	}
 
@@ -105,13 +106,13 @@ public abstract class AbstractTriMap<D, K, V> implements TriMap<D, K, V> {
 	}
 
 	@Override
-	@SuppressWarnings("all") // No clue why the key part is bugging out, as long as key != null you should be ok.
-	public boolean remove(D divider, @NotNull K key) {
-		return nodes.remove(divider, key);
+	public V removeEntry(D divider, @NotNull K key) {
+		Map<K, V> submap = getSubmap(divider);
+		return submap.remove(key);
 	}
 
 	@Override
-	public Map<K, V> remove(D divider) {
+	public Map<K, V> removeSubmap(D divider) {
 		return nodes.remove(divider);
 	}
 
